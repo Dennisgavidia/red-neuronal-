@@ -1,0 +1,37 @@
+# Generación de inferencias sobre la matriz de prueba
+y_pred = mlp_model.predict(X_test_scaled)
+y_prob = mlp_model.predict_proba(X_test_scaled)[:, 1]
+
+print("\n==============================================")
+print("REPORTE DE CLASIFICACIÓN DEL MODELO")
+print("==============================================")
+print(classification_report(y_test, y_pred, target_names=['Cumple (0)', 'Impago (1)']))
+
+# Gráfico Independiente 2: Matriz de Confusión
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6, 4.5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False,
+            xticklabels=['Cumple (0)', 'Impago (1)'],
+            yticklabels=['Cumple (0)', 'Impago (1)'])
+plt.title('Matriz de Confusión Financiera Final', fontsize=12, fontweight='bold')
+plt.xlabel('Predicción del Clasificador MLP')
+plt.ylabel('Historial Financiero Real (UCI)')
+plt.tight_layout()
+plt.show()
+
+# Gráfico Independiente 3: Curva ROC
+fpr, tpr, _ = roc_curve(y_test, y_prob)
+roc_auc = auc(fpr, tpr)
+
+plt.figure(figsize=(7, 5))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Curva ROC (Área = {roc_auc:.4f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.title('Curva ROC del Sistema Predictivo Financiero', fontsize=12, fontweight='bold')
+plt.xlabel('Tasa de Falsos Positivos (1 - Especificidad)')
+plt.ylabel('Tasa de Verdaderos Positivos (Sensibilidad)')
+plt.legend(loc="lower right")
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.tight_layout()
+plt.show()
